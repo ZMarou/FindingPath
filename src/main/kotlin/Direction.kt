@@ -1,3 +1,6 @@
+import Constants.Companion.MAX_HEIGHT
+import Constants.Companion.MAX_WIDTH
+
 enum class Direction {
     UP {
         override fun next(coordinates: Pair<Int, Int>): Pair<Int, Int> {
@@ -9,7 +12,7 @@ enum class Direction {
     DOWN {
         override fun next(coordinates: Pair<Int, Int>): Pair<Int, Int> {
             val p = coordinates.copy(second = coordinates.second.inc())
-            if (p.second > 15) return coordinates
+            if (p.second > MAX_HEIGHT) return coordinates
             return p
         }
     },
@@ -23,7 +26,7 @@ enum class Direction {
     RIGHT {
         override fun next(coordinates: Pair<Int, Int>): Pair<Int, Int> {
             val p = coordinates.copy(first = coordinates.first.inc())
-            if (p.first > 10) return coordinates
+            if (p.first > MAX_WIDTH) return coordinates
             return p
         }
     };
