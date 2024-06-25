@@ -19,7 +19,7 @@ fun main() {
     )
     printMatrix(gridMap)
     val startCoordinates = Coordinate(Pair(0, 0))
-    val word = startCoordinates.calculateWord(gridMap)
+    val word = startCoordinates.calculateWord(gridMap, startCoordinates, startCoordinates,"")
     println("Word: $word")
 }
 

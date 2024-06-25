@@ -2,7 +2,7 @@ import Constants.Companion.MAX_HEIGHT
 import Constants.Companion.MAX_WIDTH
 import Constants.Companion.PATTERN
 
-class Coordinate(private val position: Pair<Int, Int>) {
+data class Coordinate(private val position: Pair<Int, Int>) {
 
     init {
         if (position.first < 0 || position.first > MAX_WIDTH || position.second > MAX_HEIGHT || position.second < 0) {
@@ -10,52 +10,41 @@ class Coordinate(private val position: Pair<Int, Int>) {
         }
     }
 
-    fun calculateWord(gridMap: List<String>): String {
-        var wordEnd = false
-        var word = ""
-        var coordinates = position.copy()
-        var previousCoordinates = Pair(0, 0)
-        val regex = PATTERN.toRegex()
-        while (!wordEnd) {
-            val upCoordinates = Direction.UP.next(coordinates)
-            val upValue = getValue(upCoordinates, gridMap)
-            val downCoordinates = Direction.DOWN.next(coordinates)
-            val downValue = getValue(downCoordinates, gridMap)
-            val leftCoordinates = Direction.LEFT.next(coordinates)
-            val leftValue = getValue(leftCoordinates, gridMap)
-            val rightCoordinates = Direction.RIGHT.next(coordinates)
-            val rightValue = getValue(rightCoordinates, gridMap)
-            if (coordinates != upCoordinates && previousCoordinates != upCoordinates && regex.matches(upValue.toString())) {
-                if (upValue != '*') word = word.plus(upValue)
-                previousCoordinates = coordinates.copy()
-                coordinates = upCoordinates
-            } else if (coordinates != downCoordinates && previousCoordinates != downCoordinates && regex.matches(
-                    downValue.toString()
-                )
-            ) {
-                if (downValue != '*') word = word.plus(downValue)
-                previousCoordinates = coordinates.copy()
-                coordinates = downCoordinates
-            } else if (coordinates != leftCoordinates && previousCoordinates != leftCoordinates && regex.matches(
-                    leftValue.toString()
-                )
-            ) {
-                if (leftValue != '*') word = word.plus(leftValue)
-                previousCoordinates = coordinates.copy()
-                coordinates = leftCoordinates
-            } else if (coordinates != rightCoordinates && previousCoordinates != rightCoordinates && regex.matches(
-                    rightValue.toString()
-                )
-            ) {
-                if (rightValue != '*') word = word.plus(rightValue)
-                previousCoordinates = coordinates.copy()
-                coordinates = rightCoordinates
-            } else wordEnd = true
+    fun calculateWord(gridMap: List<String>, coordinate: Coordinate?, previousCoordinate: Coordinate, word: String): String {
+        if(coordinate == null) return word
+        var result: Pair<Coordinate, String>? = calculate(gridMap, Direction.UP, coordinate, previousCoordinate, word)
+        if (result != null) return calculateWord(gridMap, result.first, coordinate, result.second)
+        result = calculate(gridMap, Direction.DOWN, coordinate, previousCoordinate, word)
+        if (result != null) return calculateWord(gridMap, result.first, coordinate, result.second)
+        result = calculate(gridMap, Direction.LEFT, coordinate, previousCoordinate, word)
+        if (result != null) return calculateWord(gridMap, result.first, coordinate, result.second)
+        result = calculate(gridMap, Direction.RIGHT, coordinate, previousCoordinate, word)
+        if (result != null) return calculateWord(gridMap, result.first, coordinate, result.second)
+        return calculateWord(gridMap, null, previousCoordinate, word)
+    }
+
+    private fun calculate(
+        gridMap: List<String>,
+        direction: Direction,
+        coordinate: Coordinate,
+        previousCoordinate: Coordinate,
+        word: String
+    ): Pair<Coordinate, String>? {
+        val coordinateCalculated = Coordinate(direction.next(coordinate.position))
+        val coordinateValue = getValue(coordinateCalculated.position, gridMap)
+        if (coordinate != coordinateCalculated && previousCoordinate != coordinateCalculated && PATTERN.toRegex().matches(coordinateValue.toString())) {
+            var calculatedWord = word
+            if (coordinateValue != '*') {
+                calculatedWord = word.plus(coordinateValue)
+            }
+            return Pair(coordinateCalculated, calculatedWord)
         }
-        return word
+        return null
     }
 
     private fun getValue(coordinates: Pair<Int, Int>, map: List<String>): Char {
         return map[coordinates.second][coordinates.first]
     }
+
+
 }

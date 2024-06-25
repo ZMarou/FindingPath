@@ -38,6 +38,30 @@ class CoordinateTest {
             "     ****  "
         )
         val coordinate = Coordinate(Pair(0, 0))
-        assertEquals("COdiNg", coordinate.calculateWord(gridMap))
+        assertEquals("COdiNg", coordinate.calculateWord(gridMap, coordinate, coordinate, ""))
+    }
+
+    @Test
+    fun `given a second map when calculate word should return a word `() {
+        val gridMap = listOf(
+            "     *     ",
+            "     i     ",
+            "     C     ",
+            "     *     ",
+            "     **O** ",
+            "         * ",
+            "        d* ",
+            "        *  ",
+            "     Ni**  ",
+            "     *     ",
+            "     *     ",
+            "     *  g  ",
+            "     *  *  ",
+            "     *  *  ",
+            "     *  *  ",
+            "     ****  "
+        )
+        val coordinate = Coordinate(Pair(5, 0))
+        assertEquals("iCOdiNg", coordinate.calculateWord(gridMap, coordinate, coordinate, ""))
     }
 }
